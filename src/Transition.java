@@ -3,4 +3,5 @@ public record Transition(
     char readTapeSymbol,
     int nextState,
     char writeTapeSymbol,
-    char moveDirection) {}
+    char moveDirection
+) {}

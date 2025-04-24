@@ -43,7 +43,7 @@ public class TransitionHandler {
         for (int i = 0; i < transitions.length; i++) {
             if (!transitions[i].matches(TRANSITION_CODE)) {
                 System.out.println("ERROR");
-                System.out.print("Transition " + (i+1) + " is invalid");
+                System.out.println("Transition " + (i+1) + " is invalid");
                 return false;
             }
         }
