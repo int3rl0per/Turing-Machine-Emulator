@@ -5,7 +5,7 @@ import java.util.Scanner;
 public class Emulator {
     private static final String TRANSITION_SYMBOLS = "[0|1]+";
     private static final String TRANSITION_DELIMITER = "11";
-    private static final String TRANSITION_CODE = "0+10+10+10+10+";
+    private static final String TRANSITION_CODE = "0+10{1,3}10+10{1,3}10{1,2}";
     private static final String ELEMENT_DELIMITER = "1";
 
     public static void main(String[] args) {
