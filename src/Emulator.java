@@ -5,9 +5,9 @@ public class Emulator {
 
     public static void main(String[] args) {
         List<Transition> transitions = TransitionHandler.getTransitions();
-        // get tape content
-        // choose step / run mode
-        // emulation
+        String tape = TapeHandler.getTape();
+        // TODO: choose step / run mode
+        // TODO: emulation
     }
 
     private static void emulate(List<Transition> transitions, String tape, boolean stepOn) {
