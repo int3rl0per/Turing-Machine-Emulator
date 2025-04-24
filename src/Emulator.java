@@ -1,9 +1,12 @@
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class Emulator {
     private static final String TRANSITION_SYMBOLS = "[0|1]+";
     private static final String TRANSITION_DELIMITER = "11";
     private static final String TRANSITION_CODE = "0+10+10+10+10+";
+    private static final String ELEMENT_DELIMITER = "1";
 
     public static void main(String[] args) {
         // get TM-Code from User
@@ -14,6 +17,11 @@ public class Emulator {
         if (transitions[0].startsWith("1")) transitions[0] = transitions[0].substring(1);
         // check validity of transitions
         if (!checkTransitions(transitions)) return;
+        // convert all strings into transition objects and add to list
+        List<Transition> transitionList = new ArrayList<>();
+        for (String transition : transitions) {
+            transitionList.add(convertStringIntoTransition(transition));
+        }
     }
 
     private static String getTMCode() {
@@ -38,4 +46,38 @@ public class Emulator {
         }
         return true;
     }
+
+    private static Transition convertStringIntoTransition(String transitionString) {
+        String[] elements = transitionString.split(ELEMENT_DELIMITER);
+
+        int initialState = elements[0].length();
+        char readTapeSymbol = '0';
+        switch (elements[1].length()) {
+            case 1 -> readTapeSymbol = '0';
+            case 2 -> readTapeSymbol = '1';
+            case 3 -> readTapeSymbol = '_';
+        }
+        int nextState = elements[2].length();
+        char writeTapeSymbol = '0';
+        switch (elements[3].length()) {
+            case 1 -> writeTapeSymbol = '0';
+            case 2 -> writeTapeSymbol = '1';
+            case 3 -> writeTapeSymbol = '_';
+        }
+        char moveDirection = '0';
+        switch (elements[4].length()) {
+            case 1 -> moveDirection = 'l';
+            case 2 -> moveDirection = 'r';
+        }
+
+        return new Transition(initialState, readTapeSymbol, nextState, writeTapeSymbol, moveDirection);
+    }
+
+    private record Transition(
+            int initialState,
+            char readTapeSymbol,
+            int nextState,
+            char writeTapeSymbol,
+            char moveDirection
+    ) {}
 }
