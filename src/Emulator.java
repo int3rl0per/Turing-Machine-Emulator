@@ -1,24 +1,28 @@
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class Emulator {
-    private static final int TAPE_SYMBOL_COUNT = 15;
+    public static final int TAPE_SYMBOL_COUNT = 15;
+    public static final int TIMEOUT = 3_000;
+    public static final String TAPE_SYMBOLS = "[0|1]+";
+    public static final String RESET = "\u001B[0m";
+    public static final String RED = "\u001B[31m";
 
     public static void main(String[] args) {
         List<Transition> transitions = TransitionHandler.getTransitions();
         TransitionHandler.printTransitions(transitions);
-        String tape = TapeHandler.getTape();
+        String tape = getTape();
         Boolean stepOn = setStepMode();
         emulate(transitions, tape, stepOn);
     }
 
     private static void emulate(List<Transition> transitions, String tape, boolean stepOn) {
         int currentState = 1;
-        char currentTapeSymbol = tape.charAt(0);
         int position = 0;
+        char currentTapeSymbol = tape.charAt(position);
         int counter = 0;
         Boolean endEmulation = false;
         Scanner sc = new Scanner(System.in);
+        long startTime = System.currentTimeMillis();
 
         if (stepOn) {
             printInformation(currentState, tape, position, counter);
@@ -31,20 +35,35 @@ public class Emulator {
                 if (currentState == transition.initialState() && currentTapeSymbol == transition.readTapeSymbol()) {
                     currentState = transition.nextState();
                     tape = replaceAtPosition(tape, position, transition.writeTapeSymbol());
+                    if (position < 0) {
+                        position++;
+                    }
                     switch (transition.moveDirection()) {
                         case 'l' -> position -= 1;
                         case 'r' -> position += 1;
+                    }
+                    if (position < 0 || position >= tape.length()) {
+                        currentTapeSymbol = '_';
+                    } else {
+                        currentTapeSymbol = tape.charAt(position);
                     }
                     counter++;
                     endEmulation = false;
                     break;
                 }
             }
-            if (stepOn || endEmulation) {
+            if (stepOn && !endEmulation) {
                 printInformation(currentState, tape, position, counter);
                 sc.nextLine();
             }
+            if (!stepOn && System.currentTimeMillis() - startTime > TIMEOUT) {
+                endEmulation = true;
+                System.out.println(RED + "Turing machine timed out - probably in an infinite loop" + RESET);
+            }
+
         } while (!endEmulation);
+
+        if (!stepOn) printInformation(currentState, tape, position, counter);
 
         String status = (currentState == 2) ? "accepted" : "rejected";
         System.out.println("Word is " + status);
@@ -52,9 +71,25 @@ public class Emulator {
     }
 
     private static String replaceAtPosition(String tape, int position, char symbol) {
-        char[] tapeArray = tape.toCharArray();
-        tapeArray[position] = symbol;
-        return new String(tapeArray);
+        List<Character> tapeArray = new ArrayList<>();
+        for (char c : tape.toCharArray()) {
+            tapeArray.add(c);
+        }
+
+        if (position < 0) {
+            tapeArray.addFirst(symbol);
+        } else if (position >= tape.length()) {
+            tapeArray.addLast(symbol);
+        } else {
+            tapeArray.set(position, symbol);
+        }
+
+        StringBuilder sb = new StringBuilder();
+        for (char c : tapeArray) {
+            sb.append(c);
+        }
+
+        return sb.toString();
     }
 
     private static void printInformation(int state, String tape, int position, int counter) {
@@ -106,5 +141,17 @@ public class Emulator {
             }
         }
         return false;
+    }
+
+    private static String getTape() {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Enter the Input for the Turing-Machine");
+        System.out.print("Tape: ");
+        while (!sc.hasNext(TAPE_SYMBOLS)) {
+            System.out.println("Not valid - Please enter a valid Input");
+            System.out.print("Tape: ");
+            sc.nextLine();
+        }
+        return sc.nextLine().replaceAll(" ", "");
     }
 }
