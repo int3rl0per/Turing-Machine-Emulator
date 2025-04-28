@@ -75,4 +75,15 @@ public class TransitionHandler {
 
         return new Transition(initialState, readTapeSymbol, nextState, writeTapeSymbol, moveDirection);
     }
+
+    public static void printTransitions(List<Transition> transitions) {
+        System.out.println("State | Read | Next State | Write | Move");
+        for (Transition transition : transitions) {
+            System.out.print("q" + transition.initialState() + "    | ");
+            System.out.print(transition.readTapeSymbol() + "    | ");
+            System.out.print("q" + transition.nextState() + "         | ");
+            System.out.print(transition.writeTapeSymbol() + "     | ");
+            System.out.println(Character.toUpperCase(transition.moveDirection()));
+        }
+    }
 }

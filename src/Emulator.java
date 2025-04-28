@@ -6,6 +6,7 @@ public class Emulator {
 
     public static void main(String[] args) {
         List<Transition> transitions = TransitionHandler.getTransitions();
+        TransitionHandler.printTransitions(transitions);
         String tape = TapeHandler.getTape();
         Boolean stepOn = setStepMode();
         emulate(transitions, tape, stepOn);
@@ -16,20 +17,38 @@ public class Emulator {
         char currentTapeSymbol = tape.charAt(0);
         int position = 0;
         int counter = 0;
+        Boolean endEmulation = false;
+        Scanner sc = new Scanner(System.in);
 
-        for (Transition transition : transitions) {
-            if (currentState == transition.initialState() && currentTapeSymbol == transition.readTapeSymbol()) {
-                currentState = transition.nextState();
-                tape = replaceAtPosition(tape, position, transition.writeTapeSymbol());
-                switch (transition.moveDirection()) {
-                    case 'l' -> position -= 1;
-                    case 'r' -> position += 1;
-                }
-                counter++;
-            }
+        if (stepOn) {
+            printInformation(currentState, tape, position, counter);
+            sc.nextLine();
         }
 
-        printInformation(currentState, tape, position, counter);
+        do {
+            endEmulation = true;
+            for (Transition transition : transitions) {
+                if (currentState == transition.initialState() && currentTapeSymbol == transition.readTapeSymbol()) {
+                    currentState = transition.nextState();
+                    tape = replaceAtPosition(tape, position, transition.writeTapeSymbol());
+                    switch (transition.moveDirection()) {
+                        case 'l' -> position -= 1;
+                        case 'r' -> position += 1;
+                    }
+                    counter++;
+                    endEmulation = false;
+                    break;
+                }
+            }
+            if (stepOn || endEmulation) {
+                printInformation(currentState, tape, position, counter);
+                sc.nextLine();
+            }
+        } while (!endEmulation);
+
+        String status = (currentState == 2) ? "accepted" : "rejected";
+        System.out.println("Word is " + status);
+        System.out.print("*Emulation ended*");
     }
 
     private static String replaceAtPosition(String tape, int position, char symbol) {
@@ -42,7 +61,7 @@ public class Emulator {
         StringBuilder sb = new StringBuilder();
 
         // step counter
-        sb.append("Steps: " + counter);
+        sb.append("Step: " + counter);
         sb.append(System.lineSeparator());
 
         // current state & position
