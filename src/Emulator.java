@@ -3,7 +3,7 @@ import java.util.*;
 public class Emulator {
     public static final int TAPE_SYMBOL_COUNT = 15;
     public static final int TIMEOUT = 3_000;
-    public static final String TAPE_SYMBOLS = "[0|1]+";
+    public static final String TAPE_SYMBOLS = "[0|1|a-z]+";
     public static final String RESET = "\u001B[0m";
     public static final String RED = "\u001B[31m";
 

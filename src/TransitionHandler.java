@@ -5,7 +5,7 @@ import java.util.Scanner;
 public class TransitionHandler {
     private static final String TRANSITION_SYMBOLS = "[0|1]+";
     private static final String TRANSITION_DELIMITER = "11";
-    private static final String TRANSITION_CODE = "0+10{1,3}10+10{1,3}10{1,2}";
+    private static final String TRANSITION_CODE = "0+10+10+10+10{1,2}";
     private static final String ELEMENT_DELIMITER = "1";
 
     public static List<Transition> getTransitions() {
@@ -54,19 +54,26 @@ public class TransitionHandler {
         String[] elements = transitionString.split(ELEMENT_DELIMITER);
 
         int initialState = elements[0].length();
+
         char readTapeSymbol = '0';
         switch (elements[1].length()) {
             case 1 -> readTapeSymbol = '0';
             case 2 -> readTapeSymbol = '1';
             case 3 -> readTapeSymbol = '_';
+            default -> readTapeSymbol = (char) (elements[1].length() + 93);
+
         }
+
         int nextState = elements[2].length();
+
         char writeTapeSymbol = '0';
         switch (elements[3].length()) {
             case 1 -> writeTapeSymbol = '0';
             case 2 -> writeTapeSymbol = '1';
             case 3 -> writeTapeSymbol = '_';
+            default -> readTapeSymbol = (char) (elements[1].length() + 93);
         }
+
         char moveDirection = '0';
         switch (elements[4].length()) {
             case 1 -> moveDirection = 'l';
