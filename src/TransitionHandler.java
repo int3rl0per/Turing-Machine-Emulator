@@ -84,12 +84,24 @@ public class TransitionHandler {
 
     public static void printTransitions(List<Transition> transitions) {
         System.out.println("State | Read | Next State | Write | Move");
+        StringBuilder sb = new StringBuilder();
         for (Transition transition : transitions) {
-            System.out.print("q" + transition.initialState() + "    | ");
-            System.out.print(transition.readTapeSymbol() + "    | ");
-            System.out.print("q" + transition.nextState() + "         | ");
-            System.out.print(transition.writeTapeSymbol() + "     | ");
-            System.out.println(Character.toUpperCase(transition.moveDirection()));
+            sb.append("q" + transition.initialState());
+            sb.repeat(" ", 5 - String.valueOf(transition.initialState()).length());
+            sb.append("| ");
+
+            sb.append(transition.readTapeSymbol() + "    | ");
+
+            sb.append("q" + transition.initialState());
+            sb.repeat(" ", 10 - String.valueOf(transition.initialState()).length());
+            sb.append("| ");
+
+            sb.append(transition.writeTapeSymbol() + "     | ");
+
+            sb.append(Character.toUpperCase(transition.moveDirection()));
+
+            System.out.println(sb);
+            sb.setLength(0);
         }
     }
 }
