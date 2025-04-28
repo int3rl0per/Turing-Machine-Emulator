@@ -61,7 +61,6 @@ public class TransitionHandler {
             case 2 -> readTapeSymbol = '1';
             case 3 -> readTapeSymbol = '_';
             default -> readTapeSymbol = (char) (elements[1].length() + 93);
-
         }
 
         int nextState = elements[2].length();
@@ -71,7 +70,7 @@ public class TransitionHandler {
             case 1 -> writeTapeSymbol = '0';
             case 2 -> writeTapeSymbol = '1';
             case 3 -> writeTapeSymbol = '_';
-            default -> readTapeSymbol = (char) (elements[1].length() + 93);
+            default -> writeTapeSymbol = (char) (elements[3].length() + 93);
         }
 
         char moveDirection = '0';
