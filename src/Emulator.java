@@ -3,6 +3,7 @@ import java.util.*;
 public class Emulator {
     public static final int TAPE_SYMBOL_COUNT = 15;
     public static final int TIMEOUT = 3_000;
+    public static final boolean COUNT = true;
     public static final String TAPE_SYMBOLS = "[0|1|a-z]+";
     public static final String RESET = "\u001B[0m";
     public static final String RED = "\u001B[31m";
@@ -64,6 +65,7 @@ public class Emulator {
         } while (!endEmulation);
 
         if (!stepOn) printInformation(currentState, tape, position, counter);
+        if (COUNT) countUnary(tape);
 
         String status = (currentState == 2) ? "accepted" : "rejected";
         System.out.println("Word is " + status);
@@ -118,6 +120,15 @@ public class Emulator {
         sb.append(System.lineSeparator());
 
         System.out.print(sb);
+    }
+
+    private static void countUnary(String tape) {
+        char[] tapeArray = tape.toCharArray();
+        int count = 0;
+        for (char c : tapeArray) {
+            if (c == '1') count++;
+        }
+        System.out.println("Count of '1' on tape: " + count);
     }
 
     private static boolean setStepMode() {
